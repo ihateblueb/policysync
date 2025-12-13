@@ -30,6 +30,14 @@ dependencies {
 	// misc
 	compileOnly("ch.qos.logback:logback-classic:1.5.20")
 	compileOnly("org.slf4j:slf4j-api:2.0.17")
+
+	/*
+		Non-included dependencies
+	 */
+
+	// serialization
+	implementation("tools.jackson.core:jackson-core:3.0.3")
+	implementation("tools.jackson.dataformat:jackson-dataformat-yaml:3.0.3")
 }
 
 kotlin {
