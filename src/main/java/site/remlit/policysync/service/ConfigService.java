@@ -39,7 +39,7 @@ public class ConfigService {
         }
     }
 
-    public static Configuration getConfig() {
+    public static @NotNull Configuration getConfig() {
         copyIfNeeded();
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         return mapper.readValue(new File("plugins/policysync.yaml"), Configuration.class);
