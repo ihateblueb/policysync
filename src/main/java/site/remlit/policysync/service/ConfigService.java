@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import site.remlit.policysync.model.Configuration;
+import site.remlit.policysync.util.KtSerialization;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +49,7 @@ public class ConfigService {
             return new Configuration();
         }
 
-        return Json.Default.decodeFromString(Configuration.ktSerializer(), configString);
+        return KtSerialization.serialize(Configuration.class, configString);
     }
 
 }

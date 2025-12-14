@@ -1,13 +1,13 @@
 package site.remlit.policysync.service;
 
+import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import site.remlit.policysync.model.Configuration;
 import site.remlit.policysync.model.PolicySource;
 import site.remlit.policysync.model.PolicySourceType;
 import site.remlit.policysync.model.iceshrimp.IceshrimpHost;
-import site.remlit.policysync.util.Serialization;
+import site.remlit.policysync.util.KtSerialization;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -17,6 +17,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.List;
+import java.util.Objects;
 
 public class PullService {
 
@@ -57,8 +59,8 @@ public class PullService {
                 .GET()
                 .build();
 
-        HttpResponse<byte[]> blockedRes = client.send(blockedReq, HttpResponse.BodyHandlers.ofByteArray());
-        IceshrimpHost[] blockedHosts = (IceshrimpHost[]) Serialization.deserialize(blockedRes.body());
+        HttpResponse<String> blockedRes = client.send(blockedReq, HttpResponse.BodyHandlers.ofString());
+        List<IceshrimpHost> blockedHosts = KtSerialization.serialize(IceshrimpHost.Companion.listSerializer(), blockedRes.body());
 
         for (IceshrimpHost host : blockedHosts) {
             getLogger().info("hit host "+host);

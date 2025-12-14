@@ -9,7 +9,6 @@ data class Configuration(
 ) {
 	companion object {
 		@JvmStatic
-		fun ktSerializer() = this.serializer()
-
+		fun serializerKt() = this.serializer()
 	}
 }
