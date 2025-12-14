@@ -25,8 +25,8 @@ public class PolicySync implements AsterPlugin {
             try {
                 while (!pullThread.isInterrupted()) {
                     // Converts frequency to number of minutes
-                    Thread.sleep(ConfigService.getConfig().getFrequency() * (60L * 1000L));
                     PullService.pull();
+                    Thread.sleep(ConfigService.getConfig().getFrequency() * (60L * 1000L));
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
