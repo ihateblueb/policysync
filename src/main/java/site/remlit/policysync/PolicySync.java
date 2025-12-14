@@ -23,10 +23,11 @@ public class PolicySync implements AsterPlugin {
 
         pullThread = new Thread(() -> {
             try {
-                // Converts frequency to number of minutes
-                Thread.sleep(ConfigService.getConfig().getFrequency() * (60L * 1000L));
-                getLogger().debug("Pull thread awake");
-                PullService.pull();
+                while (!pullThread.isInterrupted()) {
+                    // Converts frequency to number of minutes
+                    Thread.sleep(ConfigService.getConfig().getFrequency() * (60L * 1000L));
+                    PullService.pull();
+                }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
