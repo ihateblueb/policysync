@@ -19,8 +19,8 @@ repositories {
 }
 
 dependencies {
-	compileOnly("site.remlit:aster:2025.12.2.1-SNAPSHOT")
-	compileOnly("site.remlit.aster:common:2025.12.2.1-SNAPSHOT")
+	compileOnly("site.remlit:aster:2025.12.2.2-SNAPSHOT")
+	compileOnly("site.remlit.aster:common-jvm:2025.12.2.2-SNAPSHOT")
 
 	// ktor server
 	compileOnly("io.ktor:ktor-server-core-jvm:3.3.3")

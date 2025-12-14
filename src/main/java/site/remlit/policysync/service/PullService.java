@@ -4,6 +4,10 @@ import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import site.remlit.aster.common.model.Policy;
+import site.remlit.aster.common.model.type.PolicyType;
+import site.remlit.aster.db.entity.PolicyEntity;
+import site.remlit.aster.service.PolicyService;
 import site.remlit.policysync.model.PolicySource;
 import site.remlit.policysync.model.PolicySourceType;
 import site.remlit.policysync.model.iceshrimp.IceshrimpHost;
@@ -26,6 +30,10 @@ public class PullService {
         return LoggerFactory.getLogger(PullService.class);
     }
 
+    public static List<PolicyEntity> getExistingPolicies(PolicyType policyType) {
+        return PolicyService.getAllByType(policyType);
+    }
+
     public static void pull() {
         for (PolicySource source : ConfigService.getConfig().getSources()) {
             try {
@@ -46,10 +54,8 @@ public class PullService {
     ) throws URISyntaxException,
             IOException,
             UncheckedIOException,
-            InterruptedException,
-            ClassNotFoundException
+            InterruptedException
     {
-        // GET /api/iceshrimp/admin/instances/blocked
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest blockedReq = HttpRequest.newBuilder()
@@ -62,9 +68,20 @@ public class PullService {
         HttpResponse<String> blockedRes = client.send(blockedReq, HttpResponse.BodyHandlers.ofString());
         List<IceshrimpHost> blockedHosts = KtSerialization.serialize(IceshrimpHost.Companion.listSerializer(), blockedRes.body());
 
+        List<String> existingBlockedHosts = PolicyService.reducePoliciesToHost(getExistingPolicies(PolicyType.Block));
+
         for (IceshrimpHost host : blockedHosts) {
-            getLogger().info("hit host "+host);
+            if (existingBlockedHosts.contains(host.getHost())) continue;
+
+            getLogger().info("Sync added block policy for {}", host.getHost());
+            PolicyService.create(
+                    PolicyType.Block,
+                    host.getHost(),
+                    null
+            );
         }
+
+        getLogger().info("Completed pull from {}", source.getUrl());
     }
 
 }
