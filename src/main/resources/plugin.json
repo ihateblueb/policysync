@@ -1,6 +1,6 @@
 {
   "name": "PolicySync",
-  "mainClass": "site.remlit.policysync.Plugin",
+  "mainClass": "site.remlit.policysync.PolicySync",
   "version": "%version%",
   "authors": ["blueb"]
 }

@@ -3,6 +3,7 @@ package site.remlit.policysync.service;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import site.remlit.policysync.model.Configuration;
 import site.remlit.policysync.model.PolicySource;
 import site.remlit.policysync.model.PolicySourceType;
 import site.remlit.policysync.model.iceshrimp.IceshrimpHost;
@@ -19,7 +20,7 @@ import java.time.Duration;
 
 public class PullService {
 
-    public static @NotNull Logger getLogger() {
+    private static @NotNull Logger getLogger() {
         return LoggerFactory.getLogger(PullService.class);
     }
 
@@ -50,7 +51,7 @@ public class PullService {
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest blockedReq = HttpRequest.newBuilder()
-                .uri(new URI(source.getUrl()))
+                .uri(new URI(source.getUrl() + "api/iceshrimp/admin/instances/blocked"))
                 .timeout(TIMEOUT)
                 .header("Authorization", "Bearer " + source.getToken())
                 .GET()

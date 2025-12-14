@@ -1,13 +1,11 @@
 package site.remlit.policysync.service;
 
+import kotlinx.serialization.json.Json;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import site.remlit.policysync.model.Configuration;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.dataformat.yaml.YAMLFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -16,23 +14,24 @@ import java.nio.file.StandardOpenOption;
 
 public class ConfigService {
 
-    public static @NotNull Logger getLogger() {
+    private static @NotNull Logger getLogger() {
         return LoggerFactory.getLogger(ConfigService.class);
     }
 
-    public static void copyIfNeeded() {
-        Path path = Path.of("plugins/policysync/policysync.yaml");
-        if (!Files.exists(path)) {
-            InputStream stream = ConfigService.class.getClassLoader().getResourceAsStream("policysync.yaml");
+    public static Path CONFIG_PATH = Path.of("plugins/policysync/config.json");
+
+    public static void initialize() {
+        if (!Files.exists(CONFIG_PATH)) {
+            InputStream stream = ConfigService.class.getClassLoader().getResourceAsStream("config.json");
 
             try {
-                Files.createDirectories(path.getParent());
+                Files.createDirectories(CONFIG_PATH.getParent());
             } catch (IOException e) {
                 getLogger().debug("Failed to create parent directory", e);
             }
 
             try {
-                Files.write(path, stream.readAllBytes(), StandardOpenOption.CREATE);
+                Files.write(CONFIG_PATH, stream.readAllBytes(), StandardOpenOption.CREATE);
             } catch (IOException e) {
                 getLogger().debug("Failed to create configuration file", e);
             }
@@ -40,9 +39,16 @@ public class ConfigService {
     }
 
     public static @NotNull Configuration getConfig() {
-        copyIfNeeded();
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        return mapper.readValue(new File("plugins/policysync.yaml"), Configuration.class);
+        String configString;
+
+        try {
+            configString = Files.readString(CONFIG_PATH);
+        } catch (IOException e) {
+            getLogger().error("Failed to read configuration file", e);
+            return new Configuration();
+        }
+
+        return Json.Default.decodeFromString(Configuration.ktSerializer(), configString);
     }
 
 }

@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 public class Serialization {
 
     public static @NotNull Object deserialize(
-            @NotNull byte[] data
+            byte @NotNull [] data
     ) throws IOException, ClassNotFoundException {
         ByteArrayInputStream in = new ByteArrayInputStream(data);
         ObjectInputStream objs = new ObjectInputStream(in);

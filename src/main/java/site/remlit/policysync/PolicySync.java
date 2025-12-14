@@ -4,10 +4,11 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import site.remlit.aster.model.plugin.AsterPlugin;
+import site.remlit.policysync.model.Configuration;
 import site.remlit.policysync.service.ConfigService;
 import site.remlit.policysync.service.PullService;
 
-public class Plugin implements AsterPlugin {
+public class PolicySync implements AsterPlugin {
 
     @Override
     public @NotNull Logger getLogger() {
@@ -18,10 +19,13 @@ public class Plugin implements AsterPlugin {
 
     @Override
     public void enable() {
+        ConfigService.initialize();
+
         pullThread = new Thread(() -> {
             try {
                 // Converts frequency to number of minutes
                 Thread.sleep(ConfigService.getConfig().getFrequency() * (60L * 1000L));
+                getLogger().debug("Pull thread awake");
                 PullService.pull();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -30,7 +34,7 @@ public class Plugin implements AsterPlugin {
         pullThread.setName("PolicySync Pull");
         pullThread.start();
 
-        getLogger().info("Started pull thread");
+        getLogger().info("Started pull thread, running every {} minutes", ConfigService.getConfig().getFrequency());
 
         /*
         there's no policy creation event???

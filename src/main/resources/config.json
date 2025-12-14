@@ -1,0 +1,10 @@
+{
+  "frequency": 120,
+  "sources": [
+    {
+      "type": "Iceshrimp",
+      "url": "https://is.example.com/",
+      "token": "FakeToken"
+    }
+  ]
+}
