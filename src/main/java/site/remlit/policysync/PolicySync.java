@@ -28,8 +28,7 @@ public class PolicySync implements AsterPlugin {
                     PullService.pull();
                     Thread.sleep(ConfigService.getConfig().getFrequency() * (60L * 1000L));
                 }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            } catch (InterruptedException ignored) {
             }
         });
         pullThread.setName("PolicySync Pull");
